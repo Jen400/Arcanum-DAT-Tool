@@ -36,7 +36,7 @@ This implementation was **converted from Java to Python** and is a **rough but w
 2. Run the script:
 
 ```bash
-python dat_unpacker.py
+python datunpacker.py
 ```
 
 3. When prompted, enter the name of the ```.dat``` file.
@@ -45,7 +45,7 @@ python dat_unpacker.py
 ### Example
 
 ```bash
-$ python dat_unpacker.py
+$ python datunpacker.py
 Enter the name of the .dat file (must be in current directory): data.dat
 Unpacked data.dat to ./out
 ```
@@ -54,7 +54,7 @@ Unpacked data.dat to ./out
 
 ```
 .
-├── dat_unpacker.py     # Main unpacking script
+├── datunpacker.py     # Main unpacking script
 ├── README.md           # This file
 └── out/                # Output directory (auto-created)
 ```
