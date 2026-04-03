@@ -43,7 +43,7 @@ A Python command-line tool for packing and unpacking `.dat` archive files used b
 
 Extract the contents of a `.dat` archive:
 
-python dattool.py unpack <archive.dat> -o <output_dir>
+`python dattool.py unpack <archive.dat> -o <output_dir>`
 
 
 | Option           | Description                              |
@@ -53,7 +53,7 @@ python dattool.py unpack <archive.dat> -o <output_dir>
 
 Example:
 
-python dattool.py unpack Arcanum1.dat -o extracted
+`python dattool.py unpack Arcanum1.dat -o extracted`
 
 
 ### Packing
@@ -61,7 +61,7 @@ python dattool.py unpack Arcanum1.dat -o extracted
 Create a `.dat` archive from one or more input directories. Each directory's
 **name** becomes the top-level path component inside the archive.
 
-python dattool.py pack \<dir\> [\<dir\> ...] -o <archive.dat> [options]
+`python dattool.py pack \<dir\> [\<dir\> ...] -o <archive.dat> [options]`
 
 | Option            | Description                                         |
 |-------------------|-----------------------------------------------------|
