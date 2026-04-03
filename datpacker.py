@@ -89,10 +89,13 @@ class DatPacker:
     def _collect_entries(
         input_dirs: list[Path],
     ) -> list[tuple[str, bool, Path | None]]:
-        """Walk input directories and collect entries.
+        """Walk input directories, collect all entries, then sort by full path.
 
-        Each input directory's name is preserved as the first path component
-        inside the archive.
+        The 1st party tool orders entries by a flat case-insensitive sort of
+        the full archive path.  This means directory separators (backslash,
+        ASCII 92) participate in the comparison, causing paths like
+        ``desert island\\file`` (space = 32) to sort before
+        ``desert\\file`` (backslash = 92).
         """
         entries: list[tuple[str, bool, Path | None]] = []
 
@@ -102,34 +105,26 @@ class DatPacker:
                 continue
             root_resolved = root.resolve()
             base = root_resolved.parent
-            entries.extend(DatPacker._traverse(root_resolved, base))
+            DatPacker._walk(root_resolved, base, entries)
 
+        entries.sort(key=lambda e: e[0].lower())
         return entries
 
     @staticmethod
-    def _traverse(
+    def _walk(
         directory: Path,
         base: Path,
-    ) -> list[tuple[str, bool, Path | None]]:
-        """Depth-first traversal matching Arcanum's entry order.
-
-        Children are sorted alphabetically (case-insensitive) and processed
-        in natural order: files are emitted directly; directories emit a
-        directory entry then immediately recurse.
-        """
-        entries: list[tuple[str, bool, Path | None]] = []
-        children = sorted(directory.iterdir(), key=lambda p: p.name.lower())
-
-        for child in children:
+        entries: list[tuple[str, bool, Path | None]],
+    ) -> None:
+        """Recursively collect every file and directory under *directory*."""
+        for child in directory.iterdir():
             dat_path = normalize_dat_path(str(child.relative_to(base)))
 
             if child.is_file():
                 entries.append((dat_path, False, child))
             elif child.is_dir():
                 entries.append((dat_path, True, None))
-                entries.extend(DatPacker._traverse(child, base))
-
-        return entries
+                DatPacker._walk(child, base, entries)
 
     @staticmethod
     def _build_entry_table(
