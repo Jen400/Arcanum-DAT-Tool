@@ -13,12 +13,9 @@ A Python command-line tool for packing and unpacking `.dat` archive files used b
 
 ## Known Limitations
 
-- **Compression:** Archives created with zlib compression may not be fully
-  compatible with the game. Use `compress` at your own risk.
 - **Unknown field:** A 4-byte field in each entry is written as zeros. The
   1st party tool writes non-zero values (likely runtime memory addresses).
   This does not appear to affect compatibility.
-- **Multiple directories:** I tested the tool and works when passing a single directory (e.g. art\*) passing multiple directories will generate a broken .dat file, I'm still trying to figure out the issue.
 
 ## Features
 
@@ -66,12 +63,12 @@ Create a `.dat` archive from one or more input directories. Each directory's
 
 python dattool.py pack \<dir\> [\<dir\> ...] -o <archive.dat> [options]
 
-| Option                | Description                                         |
-|-----------------------|-----------------------------------------------------|
-| `-o`, `--output`      | Output `.dat` file (required)                       |
-| `compress`            | Store files compressed (UNSUPPORTED!)               |
-| `--flatten`           | Use immediate subdirectories of each input as roots |
-| `-v`, `--verbose`     | Print each entry as it is packed                    |
+| Option            | Description                                         |
+|-------------------|-----------------------------------------------------|
+| `-o`, `--output`  | Output `.dat` file (required)                       |
+| `--no-compress`   | Store files uncompressed                            |
+| `--flatten`       | Use immediate subdirectories of each input as roots |
+| `-v`, `--verbose` | Print each entry as it is packed                    |
 
 Examples:
 
@@ -125,20 +122,20 @@ The binary layout of an Arcanum `.dat` archive:
 Each entry in the table:
 
 | Field             | Size     | Description                                            |
-| ----------------- | -------- | ------------------------------------------------------ |
-| `string_length`   | 4 bytes  | Length of filename including null terminator            |
+| ----------------- | -------- |--------------------------------------------------------|
+| `string_length`   | 4 bytes  | Length of filename including null terminator           |
 | `file_name`       | variable | Null-terminated filename (backslash-separated)         |
 | `unknown`         | 4 bytes  | Unknown field (written as zeros by this tool)          |
-| `flags`           | 4 bytes  | `0x0001` = file, `0x0002` = compressed, `0x0400` = dir|
+| `flags`           | 4 bytes  | `0x0001` = file, `0x0002` = compressed, `0x0400` = dir |
 | `full_size`       | 4 bytes  | Uncompressed file size (0 for directories)             |
 | `compressed_size` | 4 bytes  | Size on disk (0 for directories)                       |
 | `data_offset`     | 4 bytes  | Offset into the data blob (0 for directories)          |
 
 ### Footer format (28 bytes)
 
-| Field             | Size     | Description                                        |
-| ----------------- | -------- | -------------------------------------------------- |
-| GUID              | 16 bytes | Unique archive identifier (little-endian)          |
-| Format tag        | 4 bytes  | `0x44415431` — ASCII "DAT1" as a LE uint32        |
-| File names length | 4 bytes  | Sum of all `string_length` values                  |
-| Offset from end   | 4 bytes  | Byte distance from EOF to entry table start        |
+| Field             | Size     | Description                                    |
+| ----------------- | -------- |------------------------------------------------|
+| GUID              | 16 bytes | Unique archive identifier (little-endian)      |
+| Format tag        | 4 bytes  | `0x44415431` — ASCII "DAT1" as a LE uint32     |
+| File names length | 4 bytes  | Sum of all `string_length` values              |
+| Offset from end   | 4 bytes  | Byte distance from EOF to entry table start    |

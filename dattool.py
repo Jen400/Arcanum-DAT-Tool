@@ -59,7 +59,7 @@ def main() -> None:
     sp_pack.add_argument("directories", type=Path, nargs="+")
     sp_pack.add_argument("-o", "--output", type=Path, required=True)
     sp_pack.add_argument(
-        "--compress", action="store_true",
+        "--no-compress", action="store_true",
         help="Store files compressed (WARN: currently broken).",
     )
     sp_pack.add_argument(
@@ -95,7 +95,7 @@ def main() -> None:
             sys.exit(1)
         n = DatPacker().pack(
             input_dirs, args.output,
-            compress=args.compress,
+            compress=not args.no_compress,
             verbose=args.verbose,
         )
         print(f"Packed {n} entries into {args.output}")

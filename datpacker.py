@@ -44,20 +44,20 @@ class DatPacker:
                 file_data = abs_path.read_bytes()
                 full_size = len(file_data)
                 to_write = file_data
-                flags = DatEntry.FILE_FLAG
+                flags = DatEntry.PLAIN_FLAG
 
                 if compress and full_size > 0:
                     compressed = zlib.compress(file_data)
                     if len(compressed) < full_size:
                         to_write = compressed
-                        flags |= DatEntry.COMPRESSED_FLAG
+                        flags = DatEntry.COMPRESSED_FLAG
 
                 f.write(to_write)
                 records.append((
                     dat_path, flags, full_size, len(to_write), data_cursor,
                 ))
                 if verbose:
-                    tag = " (compressed)" if flags & DatEntry.COMPRESSED_FLAG else ""
+                    tag = " (compressed)" if flags == DatEntry.COMPRESSED_FLAG else ""
                     print(
                         f"  FILE {dat_path}"
                         f" [{full_size} -> {len(to_write)} bytes]{tag}"

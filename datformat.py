@@ -75,8 +75,9 @@ class DatFooter:
 class DatEntry:
     """A single file or directory entry inside a .dat archive."""
 
+    # PLAIN/COMPRESSED are mutually exclusive
     DIR_FLAG = 0x400
-    FILE_FLAG = 0x01
+    PLAIN_FLAG = 0x01
     COMPRESSED_FLAG = 0x02
 
     def __init__(self, data: bytes, offset: int) -> None:
